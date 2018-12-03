@@ -6,6 +6,9 @@
 \usage{
 import_mr_input(path)
 }
+\arguments{
+\item{string}{input path}
+}
 \description{
 Import data from Excel file
 }
