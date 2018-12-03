@@ -1,6 +1,6 @@
-#' @importFrom magrittr %>%
-
 #' Convert column names of a data.frame to a query friendly format
+#'
+#' @importFrom magrittr %>%
 #'
 standarize_names <- function(df) {
   colnames(df) %>% tolower() %>% 
