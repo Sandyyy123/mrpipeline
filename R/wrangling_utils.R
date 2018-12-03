@@ -1,5 +1,7 @@
 #' @importFrom magrittr %>%
 
+#' Convert column names of a data.frame to a query friendly format
+#'
 standarize_names <- function(df) {
   colnames(df) %>% tolower() %>% 
     stringi::stri_replace_all_regex("[^a-z0-9 _]", "") %>% 
@@ -15,6 +17,8 @@ clean_numeric <- function(x) {
 
 #' Import data from Excel file
 #'
+#' @param string input path
+#' @export
 import_mr_input <- function(path) {
   readxl::read_excel(path) %>% 
     standarize_names() %>%
@@ -52,6 +56,7 @@ combine_experiment_data <- function(outcome, mr, heterogeneity_metrics, meta, ma
 
 #' Combines multiple exeperiments data
 #'
+#' @export
 combine_experiments_data <- function(results) {
   exposures <- names(results)
   lapply(exposures, function(x) {
