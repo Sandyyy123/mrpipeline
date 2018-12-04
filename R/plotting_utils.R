@@ -1,4 +1,4 @@
-#' @importFrom tidyr %>%
+#' @importFrom dplyr %>%
 
 experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder, ...) {
   checkmate::assertSubset(c("method", "outcome", "pval", "or", "ci_high", "ci_low"), colnames(df))
