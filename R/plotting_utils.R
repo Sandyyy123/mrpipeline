@@ -1,11 +1,4 @@
 #' @importFrom magrittr %>%
-#' Plot a heatmap using data.frame object
-#' '
-#' @param df a long format data.frame with method, outcome, p, or, ci_high, ci_low columns and optional annotation columns
-#' @param palette a name of the 9 colour brewer palette
-#' @param ... additional arguments passed to pheatmap::pheatmap method
-#'
-#'
 
 experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder, ...) {
   checkmate::assertSubset(c("method", "outcome", "pval", "or", "ci_high", "ci_low"), colnames(df))
@@ -100,7 +93,7 @@ plot_scatter <- function(result, mar) {
   #mtext(result$meta$exposure)
   
   # Title: A. Scatterplot showing causal effect estimates
-  plot(
+  graphics::plot(
     bxg, byg,
     main = "A. Scatterplot showing causal effect estimates",
     xlab = expression(paste("Effect estimate of SNP with ES (", beta[x], ")")),
@@ -122,7 +115,7 @@ plot_scatter <- function(result, mar) {
   # Title: B. Funnel plot showing individual SNP level causal effect estimates
   x=byg/bxg
   y=seY
-  plot(
+  graphics::plot(
     x, y,
     main = " B. Funnel plot showing individual SNP level causal effect estimates",
     ylab = expression(paste("SE of effect estimate of SNP with ES (", se[x], ")")),
@@ -142,7 +135,7 @@ plot_scatter <- function(result, mar) {
     lty = c(4, 1, 2, 5), col = c("blue", "red", "black", "green"), cex = 0.8, bty = 'n')
   
   #Title: C. Heterogeneity statistic of individual SNPs
-  plot(
+  graphics::plot(
     Q_ivw,
     main = "C. Heterogeneity statistic of individual SNPs",
     ylab = "Contribution to Cochran's Q statistic",
@@ -161,7 +154,7 @@ plot_scatter <- function(result, mar) {
   
   y=byg/bxg*sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
   x = sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
-  plot(
+  graphics::plot(
     x, y,
     main = "D. Radial MR plot showing potential outlier SNPs",
     ylab = expression(`Ratio estimate` * sqrt(`Weight contributed in the IVW estimate`)),
