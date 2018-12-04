@@ -10,7 +10,8 @@ Imports:
 	stringi,
 	readxl,
 	magrittr,
-        tibble
+        tibble,
+	tangram
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
