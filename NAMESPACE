@@ -3,3 +3,4 @@
 export(combine_experiments_data)
 export(import_mr_input)
 importFrom(magrittr,"%>%")
+importFrom(tidyr,"%>%")
