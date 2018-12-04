@@ -1,5 +1,5 @@
 
-
+#' @importFrom magrittr %>%
 tangram_results <- function(results, outcome) {
   header_empty <- tangram::cell_header("")
   subheader_empty <- tangram::cell_subheader("")
@@ -69,7 +69,6 @@ tangram_results <- function(results, outcome) {
     trait_table
   }
   
-#' @importFrom magrittr %>%
   lapply(results, make_trait_table) %>%
     do.call(c, .) %>% 
     magrittr::inset(tbl, 3:(2 + length(.)), .)
