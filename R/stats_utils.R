@@ -16,12 +16,13 @@ weighted.median.estimate <- function(betaIV.in, weights.in) {
 weighted.median.boot = function(betaXG.in, betaYG.in, sebetaXG.in, sebetaYG.in, weights.in) {
   med = NULL
   for(i in 1:1000){
-    betaXG.boot = rnorm(length(betaXG.in), mean=betaXG.in, sd=sebetaXG.in)
-    betaYG.boot = rnorm(length(betaYG.in), mean=betaYG.in, sd=sebetaYG.in)
+      betaXG.boot = stats::rnorm(length(betaXG.in), mean=betaXG.in,
+      sd=sebetaXG.in)
+      betaYG.boot = stats::rnorm(length(betaYG.in), mean=betaYG.in, sd=sebetaYG.in)
     betaIV.boot = betaYG.boot/betaXG.boot
     med[i] = weighted.median.estimate(betaIV.boot, weights.in)
   }
-  return(sd(med))
+  return(stats::sd(med))
 }
 
 compute_weighted_median <- function(bxg, byg, seX, seY) {
@@ -33,7 +34,7 @@ compute_weighted_median <- function(bxg, byg, seX, seY) {
   betaWM   = weighted.median.estimate(betaIV, weights) # weighted median estimate
   sebetaWM = weighted.median.boot(BXG, BYG, seX, seY, weights)
   t     = betaWM/sebetaWM
-  p     = 2*(1-pt(abs(t),length(BYG)-1))
+  p     = 2*(1-stats::pt(abs(t),length(BYG)-1))
   CI.WM     = betaWM + c(-1,1)*sebetaWM
   LB<-CI.WM   [1]
   UB<-CI.WM   [2]
@@ -51,12 +52,12 @@ compute_weighted_median <- function(bxg, byg, seX, seY) {
 #' Weighted median estimate
 compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4, alpha=0.05) {
   beta <- function(BetaIV.in, seBetaIV.in) {
-    s <- 0.9*(min(sd(BetaIV.in), mad(BetaIV.in)))/length(BetaIV.in)^(1/5)
+      s <- 0.9*(min(stats::sd(BetaIV.in), stats::mad(BetaIV.in)))/length(BetaIV.in)^(1/5)
     weights <- seBetaIV.in^-2/sum(seBetaIV.in^-2)
     beta <- NULL
     for(cur_phi in phi) {
       h <- s*cur_phi
-      densityIV <- density(BetaIV.in, weights=weights, bw=h)
+      densityIV <- stats::density(BetaIV.in, weights=weights, bw=h)
       beta[length(beta)+1] <- densityIV$x[densityIV$y==max(densityIV$y)]
     }
     return(beta)
@@ -64,8 +65,8 @@ compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4
   boot <- function(BetaIV.in, seBetaIV.in, beta_MBE.in) {
     beta.boot <- matrix(nrow=n_boot, ncol=length(beta_MBE.in))
     for(i in 1:n_boot) {
-      BetaIV.boot      <- rnorm(length(BetaIV.in), mean=BetaIV.in, sd=seBetaIV.in[,1])
-      BetaIV.boot_NOME <- rnorm(length(BetaIV.in), mean=BetaIV.in, sd=seBetaIV.in[,2])
+        BetaIV.boot      <- stats::rnorm(length(BetaIV.in), mean=BetaIV.in, sd=seBetaIV.in[,1])
+        BetaIV.boot_NOME <- stats::rnorm(length(BetaIV.in), mean=BetaIV.in, sd=seBetaIV.in[,2])
       beta.boot[i,1:length(phi)]                     <- beta(BetaIV.in=BetaIV.boot, seBetaIV.in=rep(1, length(BetaIV)))
       beta.boot[i,(length(phi)+1):(2*length(phi))]   <- beta(BetaIV.in=BetaIV.boot, seBetaIV.in=seBetaIV.in[,1])
       beta.boot[i,(2*length(phi)+1):(3*length(phi))] <- beta(BetaIV.in=BetaIV.boot_NOME, seBetaIV.in=rep(1, length(BetaIV)))
@@ -82,12 +83,12 @@ compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4
   beta_MBE <- rep(c(beta_SimpleMBE, beta_WeightedMBE,
                     beta_SimpleMBE, beta_WeightedMBE_NOME))
   beta_MBE.boot <- boot(BetaIV.in=BetaIV, seBetaIV.in=seBetaIV, beta_MBE.in=beta_MBE)
-  se_MBE <- apply(beta_MBE.boot, 2, mad)
+  se_MBE <- apply(beta_MBE.boot, 2, stats::mad)
   
-  CIlow_MBE <- beta_MBE-qnorm(1-alpha/2)*se_MBE
-  CIupp_MBE <- beta_MBE+qnorm(1-alpha/2)*se_MBE
+  CIlow_MBE <- beta_MBE-stats::qnorm(1-alpha/2)*se_MBE
+  CIupp_MBE <- beta_MBE+stats::qnorm(1-alpha/2)*se_MBE
   
-  P_MBE <- pt(abs(beta_MBE/se_MBE), df=length(BetaXG)-1, lower.tail=F)*2
+  P_MBE <- stats::pt(abs(beta_MBE/se_MBE), df=length(BetaXG)-1, lower.tail=F)*2
   Method <- rep(c('Simple', 'Weighted', 'Simple (NOME)', 'Weighted (NOME)'), each=length(phi))
   Results <- data.frame(Method, phi, beta_MBE, se_MBE, CIlow_MBE, CIupp_MBE, P_MBE)  
   colnames(Results) <- c('method', 'phi', 'effect', 'se', 'ci_low', 'ci_high', 'pval')
@@ -127,12 +128,12 @@ compute_ivw2 <- function(bxg, byg, seX, seY) {
   W2        = 1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4)
   BIVw2     = BIV*sqrt(W2)
   sW2       = sqrt(W2)
-  IVWfitR2  = summary(lm(BIVw2 ~ -1+sW2))
+  IVWfitR2  = summary(stats::lm(BIVw2 ~ -1+sW2))
   DF      = length(byg)-1
   IVWBeta = IVWfitR2$coef[1,1]
   SE      = IVWfitR2$coef[1,2]/min(1,IVWfitR2$sigma)
-  IVW_p   = 2*(1-pt(abs(IVWBeta/SE),DF))
-  IVW_CI  = IVWBeta + c(-1,1)*qt(df=DF, 0.975)*SE
+  IVW_p   = 2*(1-stats::pt(abs(IVWBeta/SE),DF))
+  IVW_CI  = IVWBeta + c(-1,1)*stats::qt(df=DF, 0.975)*SE
   c(IVWBeta, exp(IVWBeta), exp(IVW_CI), IVW_p) %>% 
     as.list() %>% 
     as.data.frame() %>%
@@ -144,17 +145,17 @@ compute_ivw2 <- function(bxg, byg, seX, seY) {
 compute_egger <- function(bxg, byg, seX, seY) {
   BYG             = byg*sign(bxg) 
   BXG             = abs(bxg)         
-  MREggerFit      = summary(lm(BYG ~ BXG,weights=1/seY^2))
+  MREggerFit      = summary(stats::lm(BYG ~ BXG,weights=1/seY^2))
   MREggerFit$coef
   MREggerBeta0   = MREggerFit$coef[1,1]
   MREggerBeta1   = MREggerFit$coef[2,1]
   SE0            = MREggerFit$coef[1,2]/min(1,MREggerFit$sigma)
   SE1            = MREggerFit$coef[2,2]/min(1,MREggerFit$sigma)
   DF             = length(BYG)-2
-  MRBeta0_p      = 2*(1-pt(abs(MREggerBeta0/SE0),DF))
-  MRBeta1_p      = 2*(1-pt(abs(MREggerBeta1/SE1),DF))
-  MRBeta0_CI     = MREggerBeta0 + c(-1,1)*qt(df=DF, 0.975)*SE0
-  MRBeta1_CI     = MREggerBeta1 + c(-1,1)*qt(df=DF, 0.975)*SE1
+  MRBeta0_p      = 2*(1-stats::pt(abs(MREggerBeta0/SE0),DF))
+  MRBeta1_p      = 2*(1-stats::pt(abs(MREggerBeta1/SE1),DF))
+  MRBeta0_CI     = MREggerBeta0 + c(-1,1)*stats::qt(df=DF, 0.975)*SE0
+  MRBeta1_CI     = MREggerBeta1 + c(-1,1)*stats::qt(df=DF, 0.975)*SE1
   MREggerResults     = data.frame(matrix(nrow = 2,ncol = 6))
   MREggerResults[1,] = c(MREggerBeta0,SE0,MRBeta0_CI,MREggerBeta0/SE0,MRBeta0_p)
   MREggerResults[2,] = c(MREggerBeta1,SE1,MRBeta1_CI,MREggerBeta1/SE1,MRBeta1_p)
@@ -189,7 +190,7 @@ compute_q_ivw <- function(bxg, byg, seX, seY) {
 }
 
 compute_cochrane_pvalue <- function(q_ivw, nsnp) {
-  pchisq(q_ivw, df=nsnp-1, lower.tail = F)
+    stats::pchisq(q_ivw, df=nsnp-1, lower.tail = F)
 }
 
 # Rucker's Q test (p-value) of instrument i.e. trait
@@ -199,7 +200,7 @@ compute_q_eg <- function(bxg, byg, seX, seY, nsnp, mreager) {
 }
 
 compute_ruckers_q_test_pvalue <- function(q_eq, nsnp) {
-  pchisq(q_eq, df = nsnp - 2, lower.tail = F)
+    stats::pchisq(q_eq, df = nsnp - 2, lower.tail = F)
 }
 
 compute_fstat <- function(r2, n_exp) {
@@ -210,11 +211,11 @@ compute_fstat <- function(r2, n_exp) {
 compute_power <- function(r2, n_cas, n_out, ivw, alpha = 0.05) {
   K <- n_cas / n_out
   OR <- ivw[["or"]]
-  threschi <- qchisq(1 - alpha, 1)
+  threschi <- stats::qchisq(1 - alpha, 1)
   b_MR <- K * ( OR/ (1 + K * (OR - 1)) -1)
   v_MR <- (K * (1-K) - b_MR^2) / (n_out * r2)
   NCP <- b_MR^2 / v_MR
-  1 - pchisq(threschi, 1, NCP)
+  1 - stats::pchisq(threschi, 1, NCP)
 }
 
 compute_r2 <- function(bxg, byg, seX, seY, n_out, n_cas, n_exp) {
