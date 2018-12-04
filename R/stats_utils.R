@@ -1,7 +1,7 @@
-library(dplyr)
-library(tidyr)
-library(foreign)
-
+#library(dplyr)
+#library(tidyr)
+#library(foreign)
+#' @importFrom tidyr %>%
 weighted.median.estimate <- function(betaIV.in, weights.in) {
   betaIV.order = betaIV.in[order(betaIV.in)]
   weights.order = weights.in[order(betaIV.in)]
@@ -44,7 +44,7 @@ compute_weighted_median <- function(bxg, byg, seX, seY) {
     as.list() %>%
     as.data.frame() %>%
     magrittr::set_colnames(c("effect", "or", "ci_low", "ci_high", "pval")) %>%
-    mutate(method = "WME")
+    dplyr::mutate(method = "WME")
 }
 
 
@@ -137,7 +137,7 @@ compute_ivw2 <- function(bxg, byg, seX, seY) {
     as.list() %>% 
     as.data.frame() %>%
     magrittr::set_colnames(c("effect", "or", "ci_low", "ci_high", "pval")) %>%
-    mutate(method = "IVW")
+    dplyr::mutate(method = "IVW")
 }
 
 
