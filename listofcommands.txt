@@ -1,0 +1,6 @@
+cd ~
+cd ./mrpipeline
+git status
+git checkout master
+mkdir R
+cp  /Users/Grover/Dropbox/Desktop_2018/universal\(1\)/stats_utils.R ./R
