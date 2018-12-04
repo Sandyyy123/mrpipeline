@@ -5,7 +5,7 @@ tangram_results <- function(results, outcome) {
   subheader_empty <- tangram::cell_subheader("")
   cell_empty <- tangram::cell("")
   
-  tbl <- tangram(1, 1, id="results")
+  tbl <- tangram::tangram(1, 1, id="results")
   tbl[[1]][[1]] <- tangram::cell_header("Trait")
   tbl[[1]][[2]] <- tangram::cell_header("MR methodology")
   tbl[[1]][[3]] <- tangram::cell_header("Genetic Instrument")
