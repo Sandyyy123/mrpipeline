@@ -6,13 +6,13 @@ Description: What the package does (one paragraph).
 Depends: R (>= 3.4.4)
 Imports: 
 	dplyr,
+	glue,
 	tidyr,
 	stringi,
 	readxl,
 	magrittr,
         tibble,
-	tangram,
-	glue
+	tangram
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
