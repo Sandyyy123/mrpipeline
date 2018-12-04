@@ -11,7 +11,7 @@ Imports:
 	readxl,
 	magrittr,
         tibble,
-	tangram
+	tangram,
 	glue
 License: What license is it under?
 Encoding: UTF-8
