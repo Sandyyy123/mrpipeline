@@ -35,13 +35,13 @@ compute_mr <- function(bxg, byg, seX, seY) {
   # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
   
   
-  project <-  function(df) df %>% select(method, effect, or, ci_low, ci_high, pval)
+  project <-  function(df) df %>% dplyr::select(method, effect, or, ci_low, ci_high, pval)
   
   lapply(list(
     ivw = IVWResults2,
     egger = MREggerResults,
     wm = WMresults,
-    mbe = MBE %>% filter(method == "Weighted (NOME)") %>% mutate(method = "MBE")
+    mbe = MBE %>% dplyr::filter(method == "Weighted (NOME)") %>% dplyr::mutate(method = "MBE")
   ), project)
 }
 
@@ -103,7 +103,7 @@ compute_meta <- function(bxg, byg, seX, seY, mr, nsnp, n_out, n_cas, n_exp)  {
 
 
 compute_result_for_exposure <- function(df, exposure, experiment_meta) {
-  df <- df %>% filter(trait == exposure)
+    df <- df %>% dplyr::filter(trait == exposure)
   # Please add following info from input file
   bxg  <- df$effect_of_lead_variant_on_exposure_levels  # TODO Double check
   # bxg should be from column I (effect of lead variant on epxosure levels)
