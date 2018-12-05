@@ -129,12 +129,76 @@ compute_result_for_exposure <- function(df, exposure, experiment_meta) {
   
   results$data <- list(
     bxg = bxg,
+compute_mr <- function(bxg, byg, seX, seY) {
+
+  ####################################################
+  # IVW method using second order weights
+  ####################################################
+  IVWResults2 <- compute_ivw2(bxg = bxg, byg = byg, seX = seX, seY = seY)
+
+  # We need to pick up OR, Low_CI and High_CI and p-value for IVW method (for particular trait)
+  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
+
+  ####################################################
+  # Egger's method
+  ####################################################
+  MREggerResults <- compute_egger(bxg = bxg, byg = byg, seX = seX, seY = seY)
+  # We need to pick up OR, low_CI and high_CI and p-value from b1 for Egger method (for particular trait)
+  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
+
+
+  ####################################################
+  # Weighted median estimate
+-- INSERT --
+#' @importFrom magrittr %>%
+
+compute_mr <- function(bxg, byg, seX, seY) {
+
+  ####################################################
+  # IVW method using second order weights
+  ####################################################
+  IVWResults2 <- compute_ivw2(bxg = bxg, byg = byg, seX = seX, seY = seY)
+
+  # We need to pick up OR, Low_CI and High_CI and p-value for IVW method (for particular trait)
+  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should
+be rounded to 4 decimals
+
+  ####################################################
+  # Egger's method
+  ####################################################
+  MREggerResults <- compute_egger(bxg = bxg, byg = byg, seX = seX, seY = seY)
+  # We need to pick up OR, low_CI and high_CI and p-value from b1 for Egger method (for particular trait)
+  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should
+be rounded to 4 decimals
+
+
+  ####################################################
+  # Weighted median estimate
+  ####################################################
+-- INSERT --
+
+remote: Enumerating objects: 14, done.
+remote: Counting objects: 100% (14/14), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 9 (delta 3), reused 7 (delta 3), pack-reused 0
+  n_exp <- experiment_meta$n_exp[[exposure]]
+  n_out <- experiment_meta$n_out
+  n_cas <- experiment_meta$n_cas
+
+  results <- list()
+
+  results$mr <- compute_mr(bxg = bxg, byg = byg, seX = seX, seY = seY)
+  results <- c(results, compute_heterogeneity_metrics(bxg = bxg, byg = byg, seX = seX, seY = seY, mr = results$mr, nsnp = nsnp))
+  results$meta <- compute_meta(bxg = bxg, byg = byg, seX = seX, seY = seY, mr = results$mr, nsnp = nsnp, n_out = n_out, n_cas = n_cas, n_exp = n_exp)
+  results$meta$exposure <- exposure
+
+  results$data <- list(
+    bxg = bxg,
     byg = byg,
     seX = seX,
     seY = seY
   )
-  
+
   attr(results, "class") <- "mrresults"
   results
 }
-
