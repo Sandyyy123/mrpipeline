@@ -5,14 +5,17 @@ Authors@R: person("First", "Last", email = "first.last@example.com", role = c("a
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.4)
 Imports: 
-	dplyr,
 	glue,
-	tidyr,
 	stringi,
 	readxl,
-	magrittr,
         tibble,
-	tangram
+	tangram,
+	checkmate,
+	dplyr,
+	magrittr,
+	pheatmap,
+	RColorBrewer,
+	tidyr	
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
