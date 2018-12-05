@@ -7,15 +7,11 @@ compute_mr <- function(bxg, byg, seX, seY) {
   ####################################################
   IVWResults2 <- compute_ivw2(bxg = bxg, byg = byg, seX = seX, seY = seY)
   
-  # We need to pick up OR, Low_CI and High_CI and p-value for IVW method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
   
   ####################################################
   # Egger's method
   ####################################################
   MREggerResults <- compute_egger(bxg = bxg, byg = byg, seX = seX, seY = seY)
-  # We need to pick up OR, low_CI and high_CI and p-value from b1 for Egger method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
   
   
   ####################################################
@@ -23,16 +19,12 @@ compute_mr <- function(bxg, byg, seX, seY) {
   ####################################################
   
   WMresults <- compute_weighted_median(bxg = bxg, byg = byg, seX = seX, seY = seY)
-  # We need to pick up OR, low_CI and high_CI and p-value from b1 for Weighted median method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
   WMresults
   
   MBE <- compute_mbe(BetaXG = bxg, BetaYG = byg, seBetaXG =seX, seBetaYG = seY, phi=1, n_boot=1e4, alpha=0.05)
   #str(MBE)
   #MBE[4,]
   MBE
-  # We need to pick up OR, low_CI and high_CI and p-value from b1 for Weighted mode method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
   
   
   project <-  function(df) df %>% dplyr::select(method, effect, or, ci_low, ci_high, pval)
@@ -136,15 +128,11 @@ compute_mr <- function(bxg, byg, seX, seY) {
   ####################################################
   IVWResults2 <- compute_ivw2(bxg = bxg, byg = byg, seX = seX, seY = seY)
 
-  # We need to pick up OR, Low_CI and High_CI and p-value for IVW method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
 
   ####################################################
   # Egger's method
   ####################################################
   MREggerResults <- compute_egger(bxg = bxg, byg = byg, seX = seX, seY = seY)
-  # We need to pick up OR, low_CI and high_CI and p-value from b1 for Egger method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should be rounded to 4 decimals
 
 
   ####################################################
@@ -159,17 +147,11 @@ compute_mr <- function(bxg, byg, seX, seY) {
   ####################################################
   IVWResults2 <- compute_ivw2(bxg = bxg, byg = byg, seX = seX, seY = seY)
 
-  # We need to pick up OR, Low_CI and High_CI and p-value for IVW method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should
-be rounded to 4 decimals
 
   ####################################################
   # Egger's method
   ####################################################
   MREggerResults <- compute_egger(bxg = bxg, byg = byg, seX = seX, seY = seY)
-  # We need to pick up OR, low_CI and high_CI and p-value from b1 for Egger method (for particular trait)
-  # OR should be rounded to 3 decimals; 95% CI is a merge a low CI and high CI rounded to 3 decimals; p-value should
-be rounded to 4 decimals
 
 
   ####################################################
