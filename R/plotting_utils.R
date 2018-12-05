@@ -1,5 +1,5 @@
 #' @importFrom magrittr %>%
-#' @importFrom graphics plot par abline legend
+# #' @importFrom graphics plot par abline legend
    experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder, ...) {
   checkmate::assertSubset(c("method", "outcome", "pval", "or", "ci_high", "ci_low"), colnames(df))
   
