@@ -41,7 +41,7 @@
     wm = WMresults,
     mbe = MBE %>% dplyr::filter(method == "Weighted (NOME)") %>% dplyr::mutate(method = "MBE")
   ), project)
-}
+
 
 
 compute_heterogeneity_metrics <- function(bxg, byg, seX, seY, mr, nsnp) {
