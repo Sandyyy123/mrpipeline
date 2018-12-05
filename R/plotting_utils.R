@@ -1,5 +1,4 @@
 #' @importFrom magrittr %>%
-#'
 experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder, ...) {
   checkmate::assertSubset(c("method", "outcome", "pval", "or", "ci_high", "ci_low"), colnames(df))
   
@@ -27,7 +26,6 @@ experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder,
       dplyr::group_by(key) %>%
       dplyr::summarise(n = n()) %>%
       dplyr::filter(n == nlevels)
-    
     # If number of candidates is equal to number of levels
     # return the result
     if (nrow(candidates) != 0) {
@@ -70,14 +68,15 @@ plot_scatter <- function(result, mar) {
   MBEBeta <- result$mr$mbe$effect
   MREggerBeta0 <- result$mr$egger["b0", "effect"]
   MREggerBeta1 <- result$mr$egger["b1", "effect"]
-  Q_ivw <- result$heterogeneity_tests$q_ivw        # TODO As discussed on Slack this should be applied on SNPs level
+  Q_ivw <- result$heterogeneity_tests$q_ivw
+  # TODO As discussed on Slack this should be applied on SNPs level
   bxg <- result$data$bxg
   byg <- result$data$byg
   seX <- result$data$seX
   seY <- result$data$seY
   
   par(mfrow = c(2, 2))
-  #par(mar = c(5, 5, 5, 5))
+  # par(mar = c(5, 5, 5, 5))
   par(mar = mar)
   par(cex = 1.2)
   par(cex.main = 1.6)
@@ -90,7 +89,7 @@ plot_scatter <- function(result, mar) {
   lwd_thick <- 4
   lwd_thin <- 3
   
-  #mtext(result$meta$exposure)
+  # mtext(result$meta$exposure)
   
   # Title: A. Scatterplot showing causal effect estimates
   graphics::plot(
@@ -123,7 +122,7 @@ plot_scatter <- function(result, mar) {
     cex = cex, pch = pch, lty = lty, col = col
   )
   # beta should be shown as symbols and x and y should be subscripts.
-  #plot(x,y,ylab="se(GX)",xlab="BetaYG/BetaXG", pch=16,  lty=3,main="", col="blue", xlim=c(-700, max(ratio)))
+  # plot(x,y,ylab="se(GX)",xlab="BetaYG/BetaXG", pch=16,  lty=3,main="", col="blue", xlim=c(-700, max(ratio)))
   abline(v = IVWBeta, col = "red", lwd = lwd_thick, lty = 1)
   abline(v = MREggerBeta1, col = "blue", lwd = lwd_thick, lty = 4)
   abline(v = MBEBeta, col = "black", lwd = lwd_thin, lty = 2)
@@ -134,7 +133,7 @@ plot_scatter <- function(result, mar) {
     lwd = c(lwd_thick, lwd_thick, lwd_thin, lwd_thin),
     lty = c(4, 1, 2, 5), col = c("blue", "red", "black", "green"), cex = 0.8, bty = 'n')
   
-  #Title: C. Heterogeneity statistic of individual SNPs
+  # Title: C. Heterogeneity statistic of individual SNPs
   graphics::plot(
     Q_ivw,
     main = "C. Heterogeneity statistic of individual SNPs",
