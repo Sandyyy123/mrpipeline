@@ -1,13 +1,13 @@
-#' @importFrom magrittr %>%>
-
+#' @importFrom magrittr %>%
+#'
 experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder, ...) {
   checkmate::assertSubset(c("method", "outcome", "pval", "or", "ci_high", "ci_low"), colnames(df))
   
-  #' A helper function which converts input df to wide matrix
+  # A helper function which converts input df to wide matrix
   convert_to_matrix <- function(df, col) {
-    #' Convert to wide data.frame
+    # Convert to wide data.frame
     df_wide <- df %>% dplyr::select(method, outcome, one_of(col)) %>% spread_("method", col)
-    #' Convert wide data.frame to matrix and set rownames
+    # Convert wide data.frame to matrix and set rownames
     df_wide %>%
       dplyr::select(-outcome) %>%
       as.matrix() %>%
@@ -15,7 +15,7 @@ experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder,
       magrittr::extract(outcome_order, method_order)
   }
   
-  #' Find potential annotation columns
+  # Find potential annotation columns
   select_marginal_annotations <- function(df) {
       nlevels <- df %>% dplyr::select(margin) %>% dplyr::distinct() %>% nrow()
     candidates <- df %>% 
