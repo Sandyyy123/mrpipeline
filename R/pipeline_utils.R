@@ -1,4 +1,6 @@
-#' @importFrom magrittr %>%compute_mr <- function(bxg, byg, seX, seY) {
+#' @importFrom magrittr %>%
+
+compute_mr <- function(bxg, byg, seX, seY) {
   
   ####################################################
   # IVW method using second order weights
