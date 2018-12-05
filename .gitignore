@@ -20,4 +20,5 @@ tags
 # Persistent undo
 [._]*.un~
 
+# DS Store
 .DS_Store
