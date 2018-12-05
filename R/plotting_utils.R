@@ -150,7 +150,6 @@ plot_scatter <- function(result, mar) {
   abline(L3, 0, lty = 1, lwd = lwd_thick, col = "red")
   
   # Need to show all lines
-  
   y=byg/bxg*sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
   x = sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
   graphics::plot(
