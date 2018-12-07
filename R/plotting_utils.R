@@ -6,7 +6,7 @@
   # A helper function which converts input df to wide matrix
   convert_to_matrix <- function(df, col) {
     # Convert to wide data.frame
-    df_wide <- df %>% dplyr::select(method, outcome, one_of(col)) %>% spread_("method", col)
+    df_wide <- df %>% dplyr::select(method, outcome, one_of(col)) %>% tidyr::spread_("method", col)
     # Convert wide data.frame to matrix and set rownames
     df_wide %>%
       dplyr::select(-outcome) %>%
