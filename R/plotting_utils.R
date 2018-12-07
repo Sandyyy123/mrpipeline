@@ -1,8 +1,8 @@
 #' @importFrom magrittr %>%
-# #' @importFrom graphics plot par abline legend
-   experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder, ...) {
+#' @export
+experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_oder, ...) {
   checkmate::assertSubset(c("method", "outcome", "pval", "or", "ci_high", "ci_low"), colnames(df))
-  
+
   # A helper function which converts input df to wide matrix
   convert_to_matrix <- function(df, col) {
     # Convert to wide data.frame
@@ -14,11 +14,11 @@
       magrittr::set_rownames(df_wide$outcome) %>%
       magrittr::extract(outcome_order, method_order)
   }
-  
+
   # Find potential annotation columns
   select_marginal_annotations <- function(df) {
       nlevels <- df %>% dplyr::select(margin) %>% dplyr::distinct() %>% nrow()
-    candidates <- df %>% 
+    candidates <- df %>%
       tidyr::gather("key", "value", -margin) %>%
       dplyr::group_by(margin, key) %>%
       dplyr::distinct() %>%
@@ -36,22 +36,22 @@
         dplyr::select(-margin)
     }
   }
-  
+
   p_mat <- convert_to_matrix(df, "pval")
-  
+
   annot_mat <- convert_to_matrix(df, "annotation")
-  
+
   df_annotations <- df %>% dplyr::select(-pval, -or, -ci_high, -ci_low, -annotation)
-  
+
   outcome_annotations <- df_annotations %>% dplyr::select(-method) %>% dplyr::rename(margin = outcome) %>% select_marginal_annotations()
   method_annotations <- df_annotations %>% dplyr::select(-outcome) %>% dplyr::rename(margin = method)  %>% select_marginal_annotations()
-  
+
   n_outcomes <- df %>% dplyr::select(outcome) %>% dplyr::distinct() %>% nrow()
   bonferroni_cutoff <- 0.05 / n_outcomes
-  
+
   breaks <- rev(c(exp(-seq(-log(0.05), -log(bonferroni_cutoff), length.out=9)), 0))
   color <- c(rev(RColorBrewer::brewer.pal(9, palette)), "#FFFFFF")
-  
+
   pheatmap::pheatmap(
     p_mat,
     color = color, breaks = breaks,
@@ -63,6 +63,7 @@
   )
 }
 
+#' @export
 plot_scatter <- function(result, mar) {
   IVWBeta <- result$mr$ivw$effect
   WMBeta <- result$mr$wm$effect
@@ -75,23 +76,23 @@ plot_scatter <- function(result, mar) {
   byg <- result$data$byg
   seX <- result$data$seX
   seY <- result$data$seY
-  
+
   par(mfrow = c(2, 2))
   # par(mar = c(5, 5, 5, 5))
   par(mar = mar)
   par(cex = 1.2)
   par(cex.main = 1.6)
   par(cex.lab = 1.4)
-  
+
   cex <- 2.0
   pch <- 16
   lty <- 3
   col <- "grey50"
   lwd_thick <- 4
   lwd_thin <- 3
-  
+
   # mtext(result$meta$exposure)
-  
+
   # Title: A. Scatterplot showing causal effect estimates
   plot(
     bxg, byg,
@@ -100,7 +101,7 @@ plot_scatter <- function(result, mar) {
     ylab = expression(paste("Effect estimate of SNP with PD (", beta[y], ")")),
     cex = cex, pch = pch, lty = lty, col = col
   )
-  
+
   # beta should be shown as symbols and x and y should be subscripts.
   abline(a = 0, b = IVWBeta, col = "red", lwd = lwd_thick, lty = 1)
   abline(a = MREggerBeta0, b = MREggerBeta1, col = "blue", lwd = lwd_thick, lty = 4)
@@ -111,7 +112,7 @@ plot_scatter <- function(result, mar) {
     c("IVW","MR-Egger", "WME", "MBE"),
     lwd = c(lwd_thick, lwd_thick, lwd_thin, lwd_thin),
     lty=c(4,1,2,5), col=c("blue","red", "black", "green"), cex=0.8, bty='n')
-  
+
   # Title: B. Funnel plot showing individual SNP level causal effect estimates
   x=byg/bxg
   y=seY
@@ -133,7 +134,7 @@ plot_scatter <- function(result, mar) {
     c("IVW", "MR-Egger","WME", "MBE"),
     lwd = c(lwd_thick, lwd_thick, lwd_thin, lwd_thin),
     lty = c(4, 1, 2, 5), col = c("blue", "red", "black", "green"), cex = 0.8, bty = 'n')
-  
+
   # Title: C. Heterogeneity statistic of individual SNPs
   plot(
     Q_ivw,
@@ -142,14 +143,14 @@ plot_scatter <- function(result, mar) {
     xlab = "SNP",
     ylim = c(0, 10),
     cex = cex, pch = 19, col = col)
-  
+
   L1 <- 3.841459
   L2 <- 6.634897
   L3 <- 9.64372
   abline(L1, 0, lty = 3, lwd = lwd_thick, col = "red")
   abline(L2, 0, lty = 2, lwd = lwd_thick, col = "red")
   abline(L3, 0, lty = 1, lwd = lwd_thick, col = "red")
-  
+
   # Need to show all lines
   y=byg/bxg*sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
   x = sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
