@@ -6,6 +6,16 @@
 \usage{
 standarize_names(df)
 }
+\arguments{
+\item{df}{data.frame Frame to be processed}
+}
+\value{
+data.frame with query friendly names
+}
 \description{
-Convert column names of a data.frame to a query friendly format
+This function converts all names to lower case, remove ascii characters, replaces spaces with underscores.
+}
+\examples{
+standarize_names(raw_data <- tibble::tibble(`Proxy   SNP id_$` = "rs1234",
+`Proxy  SNP id`= "rs1234",`Proxy__SNP_id_` = "rs1234", `Proxy_SNP_id_` = "rs1234"))
 }

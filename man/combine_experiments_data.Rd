@@ -6,6 +6,12 @@
 \usage{
 combine_experiments_data(results)
 }
+\arguments{
+\item{results}{\code{list} as returned from \code{\link{compute_mr}}}
+}
+\value{
+data.frame with same structure as returned from \code{\link{combine_experiment_data}}
+}
 \description{
-Combines multiple exeperiments data
+Takes a list of results for multiple traits, applies \code{\link{combine_experiment_data}} and combines the result
 }

@@ -7,6 +7,29 @@
 combine_experiment_data(outcome, mr, heterogeneity_metrics, meta,
   mappers = list(egger = function(x) x["b1", ]))
 }
+\arguments{
+\item{outcome}{character name of the trait}
+
+\item{mr}{list as in \code{mr} field of the \code{\link{compute_result_for_exposure}} result}
+
+\item{heterogeneity_metrics}{list as in \code{heterogeneity_metrics} field of the \code{\link{compute_result_for_exposure}} result}
+
+\item{meta}{list as in \code{meta} field of the \code{\link{compute_result_for_exposure}} result}
+
+\item{mappers}{a named list mapping from \code{field} to a \code{function} that should be applied to MR result before merging.
+Currently used only for egger results.}
+}
+\value{
+data.frame with a single row per MR method. Contains method specific parameters \itemize{
+ \item{method} \code{character} Method name
+ \item{effect} \code{numeric}
+ \item{or}     \code{numeric}
+ \item{ci_low} \code{numeric}
+ \item{ci_high} \code{numeric}
+ \item{pval} \code{numeric}
+}
+as well as global trait statistics.
+}
 \description{
 Given single outcome results, return data.frame suitable for experiment_heatmap
 }
