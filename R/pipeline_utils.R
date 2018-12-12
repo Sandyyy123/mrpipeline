@@ -133,6 +133,64 @@ compute_result_for_exposure <- function(df, exposure, experiment_meta) {
     seY = seY
   )
 
+  results
+}
+
+
+#' Main entry point for MR pipeline
+#'
+#' @param df data.frame A \code{data.frame} containing at least following columns
+#' \itemize{
+#'  \item{trait} {\code{character}}
+#'  \item{effect_of_lead_variant_on_exposure_levels} {\code{numeric}}
+#'  \item{effect_of_lead_variant_on_outcome_levels} {\code{numeric}}
+#'  \item{standard_error_of_effect_on_exposure_se} {\code{numeric}}
+#'  \item{standard_error_of_effect_on_outcome_se} {\code{numeric}}
+#' }
+#' @param meta list A \code{list} with at least following
+#' \itemize{
+#'  \item{n_out} {\code{numeric}} of length equal to 1
+#'  \item{n_cas} {\code{numeric}} of length equal to 1
+#'  \item{n_exp} {A named \code{list}} of {\code{numeric}} values
+#' }
+#' @return A \code{mrresults} objec (named {\code{list}} which maps a trait to MR result).
+#' @export
+run_mr <- function(df, meta) {
+  checkmate::assert_names(names(meta), must.include = c("n_out", "n_cas", "n_exp"))
+
+  exposures <- names(meta$n_exp)
+  # Prepare a named list of trait: MR results
+  results <- lapply(
+    # For each trait
+    exposures,
+    # Compute MR output
+    function(x) compute_result_for_exposure(df = df, exposure = x, experiment_meta = meta)
+  ) %>% set_names(exposures)
   attr(results, "class") <- "mrresults"
   results
+}
+
+#' Read config file and knit the report
+#'
+#' The \code{config} file should have a following structure
+#' \preformatted{
+#' input_path: "/path/to/input.xlsx"
+#' metadata:
+#'   n_out: 66164
+#'   n_cas: 4127
+#'   n_exp:
+#'     Trait01: 518633
+#'     Trait02: 370711
+#'     Trait03: 318633
+#'     Trait04: 290711
+#'     Trait05: 420711
+#' }
+#'
+#' @param config character path to config.yaml.
+#' @param ... aditional arguments passed to \code{\link[rmarkdown]{render}}
+#' @return see \code{\link[rmarkdown]{render}}
+#' @export
+report_mr <- function(config, ...) {
+  input_file <- system.file("templates", "report_template.Rmd", package="mrpipeline")
+  rmarkdown::render(input = input_file,  params = list(config = config), ...)
 }
