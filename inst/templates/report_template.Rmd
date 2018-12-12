@@ -24,10 +24,7 @@ df <- import_mr_input(config$input_path)
 ```
 
 ```{r results, echo=FALSE, message=FALSE}
-results <- lapply(
-  exposures, 
-  function(x) compute_result_for_exposure(df = df, exposure = x, experiment_meta = experiment_meta)
-) %>% set_names(exposures)
+results <- run_mr(df, experiment_meta)
 ```
 
 ## Results summary

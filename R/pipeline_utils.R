@@ -133,6 +133,39 @@ compute_result_for_exposure <- function(df, exposure, experiment_meta) {
     seY = seY
   )
 
+  results
+}
+
+
+#' Main entry point for MR pipeline
+#'
+#' @param df data.frame A \code{data.frame} containing at least following columns
+#' \itemize{
+#'  \item{trait} {\code{character}}
+#'  \item{effect_of_lead_variant_on_exposure_levels} {\code{numeric}}
+#'  \item{effect_of_lead_variant_on_outcome_levels} {\code{numeric}}
+#'  \item{standard_error_of_effect_on_exposure_se} {\code{numeric}}
+#'  \item{standard_error_of_effect_on_outcome_se} {\code{numeric}}
+#' }
+#' @param meta list A \code{list} with at least following
+#' \itemize{
+#'  \item{n_out} {\code{numeric}} of length equal to 1
+#'  \item{n_cas} {\code{numeric}} of length equal to 1
+#'  \item{n_exp} {A named \code{list}} of {\code{numeric}} values
+#' }
+#' @return A \code{mrresults} objec (named {\code{list}} which maps a trait to MR result).
+#' @export
+run_mr <- function(df, meta) {
+  checkmate::assert_names(names(meta), must.include = c("n_out", "n_cas", "n_exp"))
+
+  exposures <- names(meta$n_exp)
+  # Prepare a named list of trait: MR results
+  results <- lapply(
+    # For each trait
+    exposures,
+    # Compute MR output
+    function(x) compute_result_for_exposure(df = df, exposure = x, experiment_meta = experiment_meta)
+  ) %>% set_names(exposures)
   attr(results, "class") <- "mrresults"
   results
 }
