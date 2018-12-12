@@ -15,7 +15,10 @@ Imports:
 	stringi,
 	tangram,
 	tibble,
-	tidyr	
+	tidyr
+Suggests:
+  knitr,
+  rmarkdown
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
