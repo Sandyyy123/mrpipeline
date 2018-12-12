@@ -151,7 +151,7 @@ compute_meta <- function(bxg, byg, seX, seY, mr, nsnp, n_out, n_cas, n_exp)  {
 #'  \item{heterogeneity_metrics} a named \code{list} as returned from \code{\link{compute_heterogeneity_metrics}} \code{heterogeneity_metrics}
 #'  \item{heterogeneity_tests} a named \code{list} as returned from \code{\link{compute_heterogeneity_metrics}} \code{heterogeneity_tests}
 #'  \item{meta} a named \code{list} as returned from \code{\link{compute_meta}}
-#'  \item{data} a named \code{list} containg \itemize {
+#'  \item{data} a named \code{list} containg \itemize{
 #'    \item{effect_of_lead_variant_on_exposure_levels} {\code{numeric}}
 #'    \item{effect_of_lead_variant_on_outcome_levels} {\code{numeric}}
 #'    \item{standard_error_of_effect_on_exposure_se} {\code{numeric}}
