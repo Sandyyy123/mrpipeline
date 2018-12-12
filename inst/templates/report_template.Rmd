@@ -1,0 +1,90 @@
+---
+title: "Summary"
+output: html_document
+
+params:
+    config: "config.yaml"
+---
+
+```{r imports, echo=FALSE, message=FALSE}
+library(mrpipeline)
+library(dplyr)
+library(magrittr)
+```
+
+
+```{r setup, echo=FALSE, message=FALSE}
+# Load the configuration files
+config <- yaml::read_yaml(params$config)
+experiment_meta <- config$meta
+exposures <- names(experiment_meta$n_exp)
+
+# Load the dataset
+df <- import_mr_input(config$input_path)
+```
+
+```{r results, echo=FALSE, message=FALSE}
+results <- run_mr(df, experiment_meta)
+```
+
+## Results summary
+
+```{r, results="asis", echo=FALSE, message=FALSE}
+# Convert results to tangram project and render RMarkdown output
+tangram_results(results, "Parkinson's Disease") %>% tangram::rmd()
+```
+
+## Scatter plots
+
+```{r, echo=FALSE, message=FALSE, results = 'hide'}
+# Create a list mapping from trait to the output file
+files <- exposures %>% 
+  lapply(function(x) tempfile(pattern = x, fileext = ".png")) %>% 
+  set_names(exposures)
+
+# For each trait create a panel of scatterplots
+for(e in exposures) {
+  # TODO Consider parametrizing height / width / res / mar
+  png(files[[e]],  height=16, width=24, units = "in", res=300)
+  plot_scatter(results[[e]], mar = c(6.1, 5.1, 5.1, 3.1))
+  dev.off()
+}
+```
+
+```{r, echo=FALSE, message=FALSE, results='asis'}
+# For each trait generate raw markdown
+for(e in exposures) {
+  #  Generate title
+  cat("###  Scatter plots for the", e,  "\n")
+  # Generate image output
+  cat(paste0("![](", files[[e]], ")\n\n"))
+}
+```
+
+## Heatmap
+
+```{r heatmap, echo=FALSE, message=FALSE, fig.height=8, fig.width=16}
+method_order <- c("IVW", "Egger", "WME", "MBE")
+                  
+results_df <- combine_experiments_data(results) %>%
+  mutate(pval = ifelse(pval > 0.05, 1, pval)) %>%
+  rename(`I^2` = `Cochrane Q-test (IVW) (p-value)`) %>%
+  rename(`Q_pval` = `Rucker's Q-test (p-value)`) %>%
+  rename(F_stat = f.test) %>%
+  # Marginal annotations are plotted column by column so let's reorder here
+  select(outcome, method:pval, Q_pval, `I^2`, F_stat) %>%
+  mutate(annotation = glue::glue("{sprintf('%.2f', or)}"))
+
+experiment_heatmap(
+  results_df, "Reds",
+  method_order = method_order, outcome_order = exposures,
+  fontsize_number = 16, number_color = "grey60", fontface = "bold",
+  na_col = "white",
+  annotation_colors = list(
+    F_stat = RColorBrewer::brewer.pal(4, "Blues"),
+    `I^2` = RColorBrewer::brewer.pal(4, "Purples"),
+    Q_pval = RColorBrewer::brewer.pal(4, "Greens")
+  ))
+
+
+```
