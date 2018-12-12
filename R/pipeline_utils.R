@@ -169,3 +169,28 @@ run_mr <- function(df, meta) {
   attr(results, "class") <- "mrresults"
   results
 }
+
+#' Read config file and knit the report
+#'
+#' The \code{config} file should have a following structure
+#' \preformatted{
+#' input_path: "/path/to/input.xlsx"
+#' metadata:
+#'   n_out: 66164
+#'   n_cas: 4127
+#'   n_exp:
+#'     Trait01: 518633
+#'     Trait02: 370711
+#'     Trait03: 318633
+#'     Trait04: 290711
+#'     Trait05: 420711
+#' }
+#'
+#' @param config character path to config.yaml.
+#' @param ... aditional arguments passed to \code{\link[rmarkdown]{render}}
+#' @return see \code{\link[rmarkdown]{render}}
+#' @export
+report_mr <- function(config, ...) {
+  input_file <- system.file("templates", "report_template.Rmd", package="mrpipeline")
+  rmarkdown::render(input = input_file,  params = list(config = config), ...)
+}
