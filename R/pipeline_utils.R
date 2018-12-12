@@ -164,7 +164,7 @@ run_mr <- function(df, meta) {
     # For each trait
     exposures,
     # Compute MR output
-    function(x) compute_result_for_exposure(df = df, exposure = x, experiment_meta = experiment_meta)
+    function(x) compute_result_for_exposure(df = df, exposure = x, experiment_meta = meta)
   ) %>% set_names(exposures)
   attr(results, "class") <- "mrresults"
   results
