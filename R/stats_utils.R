@@ -325,11 +325,11 @@ compute_cochrane_pvalue <- function(q_ivw, nsnp) {
 #' @param seX \code{numeric} standard error of effect on exposure se
 #' @param seY \code{numeric} standard error of effect on outcome se
 #' @param nsnp \code{numeric}
-#' @param mreager \code{data.frame} as returned from \code{\link{compute_egger}}
+#' @param mregger \code{data.frame} as returned from \code{\link{compute_egger}}
 #' @return \code{numeric}
-compute_q_eg <- function(bxg, byg, seX, seY, nsnp, mreager) {
+compute_q_eg <- function(bxg, byg, seX, seY, nsnp, mregger) {
   rs <- compute_ratios(bxg = bxg,  byg = byg, seX = seX, seY = seY)
-  sum(1 / (rs$se_ratio ^ 2) * (rs$ratio - (mreager["b0", "effect"] / abs(bxg)) - mreager["b1", "effect"]) ^ 2)
+  sum(1 / (rs$se_ratio ^ 2) * (rs$ratio - (mregger["b0", "effect"] / abs(bxg)) - mregger["b1", "effect"]) ^ 2)
 }
 
 
