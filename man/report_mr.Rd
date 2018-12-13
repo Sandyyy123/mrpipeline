@@ -17,6 +17,7 @@ see \code{\link[rmarkdown]{render}}
 \description{
 The \code{config} file should have a following structure
 \preformatted{
+rnd_seed: 123
 input_path: "/path/to/input.xlsx"
 metadata:
   n_out: 66164
