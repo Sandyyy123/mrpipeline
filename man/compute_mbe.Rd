@@ -2,40 +2,11 @@
 % Please edit documentation in R/stats_utils.R
 \name{compute_mbe}
 \alias{compute_mbe}
-\title{Compute mbe}
+\title{Weighted median estimate}
 \usage{
 compute_mbe(BetaXG, BetaYG, seBetaXG, seBetaYG, phi = c(1),
   n_boot = 10000, alpha = 0.05)
 }
-\arguments{
-\item{BetaXG}{\code{numeric} effect of lead variant on_exposure level}
-
-\item{BetaYG}{\code{numeric} effect of lead variant on outcome levels}
-
-\item{seBetaXG}{\code{numeric} standard error of effect on exposure se}
-
-\item{seBetaYG}{\code{numeric} standard error of effect on outcome se}
-
-\item{phi}{\code{numeric}}
-
-\item{n_boot}{\code{numeric} number of iterations}
-
-\item{alpha}{\code{numeric}}
-}
-\value{
-\code{data.frame} with \itemize{
- \item{method}
- \item{phi}
- \item{effect}
- \item{se}
- \item{ci_low}
- \item{ci_high}
- \item{pval}
- \item{effect}
- \item{ci_low}
- \item{ci_high}
-}
-}
 \description{
-Compute mbe
+Weighted median estimate
 }
