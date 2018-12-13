@@ -9,6 +9,9 @@ tangram_results(results, outcome)
 \arguments{
 \item{results}{list of the same shape as returned from \code{\link{run_mr}}}
 }
+\value{
+a tangram object (see \code{\link[tangram]{tangram}} for details)
+}
 \description{
 Conver MR analysis results to tangram object
 }
