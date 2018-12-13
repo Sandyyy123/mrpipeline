@@ -6,11 +6,14 @@
 #' @return data.frame with query friendly names
 #' @export
 #' @examples
-#' standarize_names(raw_data <- tibble::tibble(`Proxy   SNP id_$` = "rs1234",
-#' `Proxy  SNP id`= "rs1234",`Proxy__SNP_id_` = "rs1234", `Proxy_SNP_id_` = "rs1234"))
+#' standardize_names(tibble::tibble(
+#'   `Proxy   SNP id_$` = "rs1234",
+#'   `Proxy  SNP id`= "rs1234",
+#'   `Proxy__SNP_id_` = "rs1234",
+#'   `Proxy_SNP_id_` = "rs1234"))
 #' @importFrom magrittr %>%
 #'
-standarize_names <- function(df) {
+standardize_names <- function(df) {
   # Changes all characters in column names to lower case
   colnames(df) %>% tolower() %>%
     # Remove all characters other than letters numbers spaces and underscore
@@ -61,7 +64,7 @@ clean_numeric <- function(x) {
 #'
 import_mr_input <- function(path) {
   readxl::read_excel(path) %>%
-    standarize_names() %>%
+    standardize_names() %>%
     # Convert effect and standard error columns to numeric using clean_numeric function
     dplyr::mutate_at(
       dplyr::vars(
