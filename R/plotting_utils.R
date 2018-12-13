@@ -1,3 +1,20 @@
+#' Create a heatmap plot
+#'
+#' @param df \code{data.frame} with following columns \itemize{
+#'   \item{method}
+#'   \item{outcome}
+#'   \item{pval}
+#'   \item{or}
+#'   \item{ci_high}
+#'   \item{ci_low}
+#' }
+#' @param palette \code{character} Color paletter to be passed to \code{pheatmap}
+#' @param method_order \code{character} vector defining order of columns in the heatmap.
+#'                     Should match values in the \code{method} column.
+#' @param outcome_order \code{character} vector defining order of rows in the heatmap.
+#'                     Should match values in the \code{outcome} column.
+#' @param ... Additional arguments passed to \code{\link[pheatmap]{pheatmap}}
+#' @return A plot returned by \code{\link[pheatmap]{pheatmap}}
 #' @importFrom magrittr %>%
 #' @export
 experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_order, ...) {
@@ -63,6 +80,18 @@ experiment_heatmap <- function(df, palette = "OrRd", method_order, outcome_order
   )
 }
 
+#' Plot pannel of scatter plots
+#'
+#' The result contains four plots \itemize{
+#'   \item{Scatterplot showing causal effect estimates}
+#'   \item{Funnel plot showing individual SNP level causal effect estimates}
+#'   \item{Heterogeneity statistic of individual SNPs}
+#'   \item{Radial MR plot showing potential outlier SNPs}
+#' }
+#'
+#' @param result a \code{list} as returned from \code{\link{compute_result_for_exposure}}
+#' @param mar a numeric vector suitable as an argument for \code{par(mar = mar)}
+#' @return A set of plots
 #' @export
 plot_scatter <- function(result, mar) {
   IVWBeta <- result$mr$ivw$effect
