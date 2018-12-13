@@ -159,7 +159,11 @@ compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4
   return(Results)
 }
 
-# I2 (%)
+#' Compute ISQ
+#'
+#' @param y \code{numeric}
+#' @param s \code{numeric}
+#' @return \code{numeric}
 Isq = function(y,s){
   k = length(y)
   w = 1/s^2; sum.w <- sum(w)
