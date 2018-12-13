@@ -1,6 +1,14 @@
-#library(dplyr)
-#library(tidyr)
-#library(foreign)
+#' Compute weighted meadian esitmate
+#'
+#' Used by weighted.median.boot with
+#' \itemize{
+#'   \item{\code{effect_of_lead_variant_on_outcome_levels / effect_of_lead_variant_on_exposure_level} as \code{betaIV}}
+#'   \item{\code{sqrt(standard_error_of_effect_on_outcome_se / effect_of_lead0variant_on_exposure_level)} as \code{weights}}
+#' }
+#'
+#' @param betaIV.in \code{numeric} a vector of values
+#' @param weights.in \code{numeric} a vector of weights
+#' @return \code{numeric} a median estimate
 #' @importFrom tidyr %>%
 weighted.median.estimate <- function(betaIV.in, weights.in) {
   betaIV.order = betaIV.in[order(betaIV.in)]
@@ -13,6 +21,23 @@ weighted.median.estimate <- function(betaIV.in, weights.in) {
   return(weighted.est)
 }
 
+#' Compute MC esitmate of weighted median
+#'
+#' Used by compute_weighted_median with
+#' \itemize{
+#'   \item{\code{effect_of_lead_variant_on_exposure_level} as \code{betaXG.in}}
+#'   \item{\code{effect_of_lead_variant_on_outcome_levels} as \code{betaYG.in}}
+#'   \item{\code{standard_error_of_effect_on_exposure_se} as \code{sebetaXG}}
+#'   \item{\code{standard_error_of_effect_on_outcome_se} as \code{sebetaXG.in}}
+#'   \item{\code{sqrt(standard_error_of_effect_on_outcome_se / effect_of_lead0variant_on_exposure_level)}}
+#' }
+#'
+#' @param betaXG.in \code{numeric}
+#' @param betaYG.in \code{numeric}
+#' @param sebetaXG.in \code{numeric}
+#' @param sebetaYG.in \code{numeric}
+#' @param weights.in \code{numeric}
+#' @return \code{numeric}
 weighted.median.boot = function(betaXG.in, betaYG.in, sebetaXG.in, sebetaYG.in, weights.in) {
   med = NULL
   for(i in 1:1000){
@@ -25,6 +50,20 @@ weighted.median.boot = function(betaXG.in, betaYG.in, sebetaXG.in, sebetaYG.in, 
   return(stats::sd(med))
 }
 
+
+#' Compute weighted median
+#'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @return \code{data.frame} with \itemize{
+#'   \item{effect}
+#'   \item{or}
+#'   \item{ci_low}
+#'   \item{ci_high}
+#'   \item{pval}
+#' } columns
 compute_weighted_median <- function(bxg, byg, seX, seY) {
   BYG             = byg*sign(bxg) 
   BXG             = abs(bxg)         
@@ -111,7 +150,11 @@ Isq = function(y,s){
   return(Isq)
 }
 
-# Cochran Q-test (p-value) of instrument i.e. trait
+#' Cochran Q-test (p-value) of instrument i.e. trait
+#'
+#' @param y \code{numeric}
+#' @param s \code{numeric}
+#' @return \code{numeric}
 q_test = function(y,s){
   k = length(y)
   w = 1/s^2; sum.w <- sum(w)
@@ -123,6 +166,17 @@ q_test = function(y,s){
 
 #' IVW method using second order weights
 #'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @return \code{data.frame} with \itemize{
+#'   \item{effect}
+#'   \item{or}
+#'   \item{ci_low}
+#'   \item{ci_high}\
+#'   \item{pval}
+#' } columns.
 compute_ivw2 <- function(bxg, byg, seX, seY) {
   BIV       = byg/bxg
   W2        = 1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4)
@@ -141,7 +195,24 @@ compute_ivw2 <- function(bxg, byg, seX, seY) {
     dplyr::mutate(method = "IVW")
 }
 
-
+#' Compute Egger esitamtes
+#'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @return \code{data.frame} with \itemize{
+#'   \item{effect}
+#'   \item{se}
+#'   \item{lb}
+#'   \item{ub}
+#'   \item{wald_test}
+#'   \item{pval}
+#'   \item{method }
+#'   \item{or}
+#'   \item{ci_low }
+#'   \item{ci_high}
+#' } columns
 compute_egger <- function(bxg, byg, seX, seY) {
   BYG             = byg*sign(bxg) 
   BXG             = abs(bxg)         
@@ -179,35 +250,84 @@ compute_ratios <- function(bxg, byg, seX, seY) {
   list(ratio = ratio, se_ratio = se_ratio)
 }
 
+#' Compute I2
+#'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @return \code{numeric}
 compute_i2 <- function(bxg, byg, seX, seY) {
   rs <- compute_ratios(bxg, byg, seX, seY)
   Isq(rs$ratio, rs$se_ratio) # unweighted
 }
 
+
+#' Compute q ivw
+#'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @return numeric
 compute_q_ivw <- function(bxg, byg, seX, seY) {
   rs <- compute_ratios(bxg, byg, seX, seY)
   q_test(rs$ratio, rs$se_ratio)
 }
 
+
+#' Cochrane pvalue
+#'
+#' @param q_ivw \code{numeric}
+#' @param nsnp \code{numeric}
+#' @return \code{numeric} pvalue
 compute_cochrane_pvalue <- function(q_ivw, nsnp) {
     stats::pchisq(q_ivw, df=nsnp-1, lower.tail = F)
 }
 
-# Rucker's Q test (p-value) of instrument i.e. trait
+#' Rucker's Q test (p-value) of instrument i.e. trait
+#'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @param nsnp \code{numeric}
+#' @param mreager \code{data.frame} as returned from \code{\link{compute_egger}}
+#' @return \code{numeric}
 compute_q_eg <- function(bxg, byg, seX, seY, nsnp, mreager) {
   rs <- compute_ratios(bxg = bxg,  byg = byg, seX = seX, seY = seY)
   sum(1 / (rs$se_ratio ^ 2) * (rs$ratio - (mreager["b0", "effect"] / abs(bxg)) - mreager["b1", "effect"]) ^ 2)
 }
 
+
+#' Compute Rucker's Q test p-value
+#'
+#' Used by \code{\link{compute_heterogeneity_metrics}}
+#'
+#' @param q_eq \code{numeric}
+#' @param nsnp \code{numeric}
+#' @return \code{numeric}
 compute_ruckers_q_test_pvalue <- function(q_eq, nsnp) {
     stats::pchisq(q_eq, df = nsnp - 2, lower.tail = F)
 }
 
+#' Compute F stat
+#'
+#' @param r2 \code{numeric}
+#' @param n_exp \code{numeric}
+#' @return \code{numeric}
 compute_fstat <- function(r2, n_exp) {
   (r2 * (n_exp - 2)) / (1 - r2)
 }
 
-# Power of the study for a specific result i.e. OR
+#' Power of the study for a specific result i.e. OR
+#'
+#' @param rw \code{numeric}
+#' @param n_cas \code{numeric}
+#' @param n_out \code{numeric}
+#' @param ivw \code{numeric}
+#' @param alpha \code{numeric}
+#' @return  \code{numeric}
 compute_power <- function(r2, n_cas, n_out, ivw, alpha = 0.05) {
   K <- n_cas / n_out
   OR <- ivw[["or"]]
@@ -218,6 +338,16 @@ compute_power <- function(r2, n_cas, n_out, ivw, alpha = 0.05) {
   1 - stats::pchisq(threschi, 1, NCP)
 }
 
+#' Compute R^2
+#'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @param n_out \code{numeric}
+#' @param n_cas \code{numeric}
+#' @param n_exp \code{numeric}
+#' @return \code{numeric}
 compute_r2 <- function(bxg, byg, seX, seY, n_out, n_cas, n_exp) {
   snp_Fstat <- (bxg * bxg) / (seX * seX)
   snp_R2 <- snp_Fstat / ((n_exp - 2 - snp_Fstat))
