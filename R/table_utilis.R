@@ -1,7 +1,7 @@
 #' Conver MR analysis results to tangram object
 #'
 #' @param results list of the same shape as returned from \code{\link{run_mr}}
-#' @return a tangram object (see \code(\link[tangram]{tangram}} for details)
+#' @return a tangram object (see \code{\link[tangram]{tangram}} for details)
 #' @importFrom magrittr %>%
 #' @export
 tangram_results <- function(results, outcome) {
