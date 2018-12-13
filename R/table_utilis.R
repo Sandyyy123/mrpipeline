@@ -1,6 +1,7 @@
 #' Conver MR analysis results to tangram object
 #'
 #' @param results list of the same shape as returned from \code{\link{run_mr}}
+#' @param outcome character
 #' @return a tangram object (see \code{\link[tangram]{tangram}} for details)
 #' @importFrom magrittr %>%
 #' @export
@@ -62,27 +63,27 @@ tangram_results <- function(results, outcome) {
     # Set MR results
     for(i in 1:nrow(combined_data)) {
       trait_table[[i]][[2]] <- tangram::cell(combined_data[i, "method"])
-      trait_table[[i]][[6]] <- tangram::cell(round(combined_data[i, "or"], 3))
+      trait_table[[i]][[6]] <- tangram::cell(sprintf("%.3f", combined_data[i, "or"]))
       trait_table[[i]][[7]] <- tangram::cell(
-        glue::glue('{round(combined_data[i, "ci_low"], 3)}-{round(combined_data[i, "ci_high"], 3)}')
+        glue::glue('{sprintf("%.3f", combined_data[i, "ci_low"])}-{sprintf("%.3f", combined_data[i, "ci_high"])}')
       )
-      trait_table[[i]][[8]] <- tangram::cell(round(combined_data[i, "pval"], 4))
+      trait_table[[i]][[8]] <- tangram::cell(sprintf("%.4f", combined_data[i, "pval"]))
     }
 
     # Set heterogenity metrics
     for(i in 1:length(result$heterogeneity_metrics)) {
       metric <- result$heterogeneity_metrics[i]
       trait_table[[i]][[9]] <- tangram::cell(names(metric))
-      trait_table[[i]][[10]] <- tangram::cell(round(metric[[1]], 4))
+      trait_table[[i]][[10]] <- tangram::cell(sprintf("%.4f", metric[[1]]))
     }
 
     # Set genetic instruments
     trait_table[[1]][[3]] <- tangram::cell(result$meta$nsnp)
-    trait_table[[1]][[4]] <- round(tangram::cell(result$meta$r2), 4)
-    trait_table[[1]][[5]] <- round(tangram::cell(result$meta$f.test), 1)
+    trait_table[[1]][[4]] <- sprintf("%.4f", tangram::cell(result$meta$r2))
+    trait_table[[1]][[5]] <- sprintf("%.1f", tangram::cell(result$meta$f.test))
 
     # Set power
-    trait_table[[1]][[11]] <- tangram::cell(round(result$meta$power * 100, 1))
+    trait_table[[1]][[11]] <- tangram::cell(sprintf("%.1f", result$meta$power * 100))
 
     trait_table
   }
