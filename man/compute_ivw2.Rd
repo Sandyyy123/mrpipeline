@@ -6,24 +6,6 @@
 \usage{
 compute_ivw2(bxg, byg, seX, seY)
 }
-\arguments{
-\item{bxg}{\code{numeric} effect of lead variant on_exposure level}
-
-\item{byg}{\code{numeric} effect of lead variant on outcome levels}
-
-\item{seX}{\code{numeric} standard error of effect on exposure se}
-
-\item{seY}{\code{numeric} standard error of effect on outcome se}
-}
-\value{
-\code{data.frame} with \itemize{
-  \item{effect}
-  \item{or}
-  \item{ci_low}
-  \item{ci_high}\
-  \item{pval}
-} columns.
-}
 \description{
 IVW method using second order weights
 }
