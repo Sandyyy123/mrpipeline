@@ -88,7 +88,27 @@ compute_weighted_median <- function(bxg, byg, seX, seY) {
 }
 
 
-#' Weighted median estimate
+#' Compute mbe
+#'
+#' @param BetaXG \code{numeric} effect of lead variant on_exposure level
+#' @param BetaYG \code{numeric} effect of lead variant on outcome levels
+#' @param seBetaXG \code{numeric} standard error of effect on exposure se
+#' @param seBetaYG \code{numeric} standard error of effect on outcome se
+#' @param phi \code{numeric}
+#' @param n_boot \code{numeric} number of iterations
+#' @param alpha \code{numeric}
+#' @return \code{data.frame} with \itemize{
+#'  \item{method}
+#'  \item{phi}
+#'  \item{effect}
+#'  \item{se}
+#'  \item{ci_low}
+#'  \item{ci_high}
+#'  \item{pval}
+#'  \item{effect}
+#'  \item{ci_low}
+#'  \item{ci_high}
+#' }
 compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4, alpha=0.05) {
   beta <- function(BetaIV.in, seBetaIV.in) {
       s <- 0.9*(min(stats::sd(BetaIV.in), stats::mad(BetaIV.in)))/length(BetaIV.in)^(1/5)
@@ -241,7 +261,16 @@ compute_egger <- function(bxg, byg, seX, seY) {
   MREggerResults
 }
 
-
+#' Compute ratios
+#'
+#' @param bxg \code{numeric} effect of lead variant on_exposure level
+#' @param byg \code{numeric} effect of lead variant on outcome levels
+#' @param seX \code{numeric} standard error of effect on exposure se
+#' @param seY \code{numeric} standard error of effect on outcome se
+#' @return a named \code{list} with two fields \itemize{
+#'   \item{ratio} {bxg to byg ratio}
+#'   \item{se_ratio} {seX to seY ratio}
+#' }
 compute_ratios <- function(bxg, byg, seX, seY) { 
   ratio =  byg/bxg
   a = (seY^2)/(byg^2)
