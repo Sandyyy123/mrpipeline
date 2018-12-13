@@ -16,6 +16,10 @@ library(magrittr)
 ```{r setup, echo=FALSE, message=FALSE}
 # Load the configuration files
 config <- yaml::read_yaml(params$config)
+
+# Set seed
+set.seed(config$rnd_seed)
+
 experiment_meta <- config$meta
 exposures <- names(experiment_meta$n_exp)
 
