@@ -4,7 +4,7 @@
 \alias{compute_q_eg}
 \title{Rucker's Q test (p-value) of instrument i.e. trait}
 \usage{
-compute_q_eg(bxg, byg, seX, seY, nsnp, mreager)
+compute_q_eg(bxg, byg, seX, seY, nsnp, mregger)
 }
 \arguments{
 \item{bxg}{\code{numeric} effect of lead variant on_exposure level}
@@ -17,7 +17,7 @@ compute_q_eg(bxg, byg, seX, seY, nsnp, mreager)
 
 \item{nsnp}{\code{numeric}}
 
-\item{mreager}{\code{data.frame} as returned from \code{\link{compute_egger}}}
+\item{mregger}{\code{data.frame} as returned from \code{\link{compute_egger}}}
 }
 \value{
 \code{numeric}

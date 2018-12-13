@@ -11,13 +11,13 @@
 #' @return \code{numeric} a median estimate
 #' @importFrom tidyr %>%
 weighted.median.estimate <- function(betaIV.in, weights.in) {
-  betaIV.order = betaIV.in[order(betaIV.in)]
-  weights.order = weights.in[order(betaIV.in)]
-  weights.sum = cumsum(weights.order)-0.5*weights.order
-  weights.sum = weights.sum/sum(weights.order)
-  below = max(which(weights.sum<0.5))
-  weighted.est = betaIV.order[below] + (betaIV.order[below+1]-betaIV.order[below])*
-    (0.5-weights.sum[below])/(weights.sum[below+1]-weights.sum[below])
+  betaIV.order <- betaIV.in[order(betaIV.in)]
+  weights.order <- weights.in[order(betaIV.in)]
+  weights.sum <- cumsum(weights.order) - 0.5 * weights.order
+  weights.sum <- weights.sum / sum(weights.order)
+  below <- max(which(weights.sum < 0.5))
+  weighted.est <- betaIV.order[below] + (betaIV.order[below + 1] - betaIV.order[below])*
+    (0.5 - weights.sum[below]) / (weights.sum[below + 1] - weights.sum[below])
   return(weighted.est)
 }
 
@@ -41,11 +41,10 @@ weighted.median.estimate <- function(betaIV.in, weights.in) {
 weighted.median.boot = function(betaXG.in, betaYG.in, sebetaXG.in, sebetaYG.in, weights.in) {
   med = NULL
   for(i in 1:1000){
-      betaXG.boot = stats::rnorm(length(betaXG.in), mean=betaXG.in,
-      sd=sebetaXG.in)
-      betaYG.boot = stats::rnorm(length(betaYG.in), mean=betaYG.in, sd=sebetaYG.in)
-    betaIV.boot = betaYG.boot/betaXG.boot
-    med[i] = weighted.median.estimate(betaIV.boot, weights.in)
+      betaXG.boot <- stats::rnorm(length(betaXG.in), mean = betaXG.in, sd = sebetaXG.in)
+      betaYG.boot <- stats::rnorm(length(betaYG.in), mean = betaYG.in, sd = sebetaYG.in)
+      betaIV.boot <- betaYG.boot / betaXG.boot
+      med[i] <- weighted.median.estimate(betaIV.boot, weights.in)
   }
   return(stats::sd(med))
 }
@@ -65,20 +64,20 @@ weighted.median.boot = function(betaXG.in, betaYG.in, sebetaXG.in, sebetaYG.in, 
 #'   \item{pval}
 #' } columns
 compute_weighted_median <- function(bxg, byg, seX, seY) {
-  BYG             = byg*sign(bxg)
-  BXG             = abs(bxg)
+  BYG      <- byg * sign(bxg)
+  BXG      <- abs(bxg)
 
-  betaIV   = BYG/BXG
-  weights  = (seY/BXG)^-2
-  betaWM   = weighted.median.estimate(betaIV, weights) # weighted median estimate
-  sebetaWM = weighted.median.boot(BXG, BYG, seX, seY, weights)
-  t     = betaWM/sebetaWM
-  p     = 2*(1-stats::pt(abs(t),length(BYG)-1))
-  CI.WM     = betaWM + c(-1,1)*sebetaWM
-  LB<-CI.WM   [1]
-  UB<-CI.WM   [2]
-  WMresults = data.frame(Estimate=betaWM,Std.Error=sebetaWM,LB,UB,t,p)
-  names(WMresults) = c("Effect", "SE", "LB","UB","Wald Test", "pval")
+  betaIV   <- BYG / BXG
+  weights  <- (seY / BXG)^-2
+  betaWM   <- weighted.median.estimate(betaIV, weights) # weighted median estimate
+  sebetaWM <- weighted.median.boot(BXG, BYG, seX, seY, weights)
+  t     <- betaWM / sebetaWM
+  p     <- 2 * (1 - stats::pt(abs(t), length(BYG) - 1))
+  CI.WM     <- betaWM + c(-1, 1) * sebetaWM
+  LB <- CI.WM[1]
+  UB <- CI.WM[2]
+  WMresults <- data.frame(Estimate = betaWM, Std.Error = sebetaWM, LB, UB, t, p)
+  names(WMresults) <- c("Effect", "SE", "LB","UB","Wald Test", "pval")
   WMresults
   c(betaWM, exp(betaWM), exp(LB), exp(UB), p) %>%
     as.list() %>%
@@ -159,15 +158,20 @@ compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4
   return(Results)
 }
 
-# I2 (%)
-Isq = function(y,s){
-  k = length(y)
-  w = 1/s^2; sum.w <- sum(w)
-  mu.hat = sum(y*w)/sum.w
-  Q = sum(w*(y-mu.hat)^2)
-  Isq = (Q - (k-1))/Q
-  Isq = max(0, Isq)
-  return(Isq)
+#' Compute ISQ
+#'
+#' @param y \code{numeric}
+#' @param s \code{numeric}
+#' @return \code{numeric}
+Isq <- function(y, s) {
+  k <- length(y)
+  w <- 1 / s^2
+  sum.w <- sum(w)
+  mu.hat <- sum(y*w) / sum.w
+  Q <- sum(w * (y - mu.hat)^2)
+  Isq <- (Q - (k - 1)) / Q
+  Isq <- max(0, Isq)
+  Isq
 }
 
 #' Cochran Q-test (p-value) of instrument i.e. trait
@@ -175,12 +179,13 @@ Isq = function(y,s){
 #' @param y \code{numeric}
 #' @param s \code{numeric}
 #' @return \code{numeric}
-q_test = function(y,s){
-  k = length(y)
-  w = 1/s^2; sum.w <- sum(w)
-  mu.hat = sum(y*w)/sum.w
-  Q = sum(w*(y-mu.hat)^2)
-  return(Q)
+q_test <- function(y, s) {
+  k <- length(y)
+  w <- 1 / s^2
+  sum.w <- sum(w)
+  mu.hat = sum(y * w) / sum.w
+  Q = sum(w * (y - mu.hat)^2)
+  Q
 }
 
 
@@ -198,16 +203,16 @@ q_test = function(y,s){
 #'   \item{pval}
 #' } columns.
 compute_ivw2 <- function(bxg, byg, seX, seY) {
-  BIV       = byg/bxg
-  W2        = 1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4)
-  BIVw2     = BIV*sqrt(W2)
-  sW2       = sqrt(W2)
-  IVWfitR2  = summary(stats::lm(BIVw2 ~ -1+sW2))
-  DF      = length(byg)-1
-  IVWBeta = IVWfitR2$coef[1,1]
-  SE      = IVWfitR2$coef[1,2]/min(1,IVWfitR2$sigma)
-  IVW_p   = 2*(1-stats::pt(abs(IVWBeta/SE),DF))
-  IVW_CI  = IVWBeta + c(-1,1)*stats::qt(df=DF, 0.975)*SE
+  BIV       <- byg / bxg
+  W2        <- 1 / (seY^2 / bxg^2 + (byg^2) * seX^2 / bxg^4)
+  BIVw2     <- BIV*sqrt(W2)
+  sW2       <- sqrt(W2)
+  IVWfitR2  <- summary(stats::lm(BIVw2 ~ -1+sW2))
+  DF      <- length(byg) - 1
+  IVWBeta <- IVWfitR2$coef[1, 1]
+  SE      <- IVWfitR2$coef[1, 2] / min(1, IVWfitR2$sigma)
+  IVW_p   <- 2 * (1 - stats::pt(abs(IVWBeta / SE), DF))
+  IVW_CI  <- IVWBeta + c(-1, 1) * stats::qt(df = DF, 0.975) * SE
   c(IVWBeta, exp(IVWBeta), exp(IVW_CI), IVW_p) %>%
     as.list() %>%
     as.data.frame() %>%
@@ -234,22 +239,22 @@ compute_ivw2 <- function(bxg, byg, seX, seY) {
 #'   \item{ci_high}
 #' } columns
 compute_egger <- function(bxg, byg, seX, seY) {
-  BYG             = byg*sign(bxg)
-  BXG             = abs(bxg)
-  MREggerFit      = summary(stats::lm(BYG ~ BXG,weights=1/seY^2))
+  BYG             <- byg * sign(bxg)
+  BXG             <- abs(bxg)
+  MREggerFit      <- summary(stats::lm(BYG ~ BXG, weights=1 / seY^2))
   MREggerFit$coef
-  MREggerBeta0   = MREggerFit$coef[1,1]
-  MREggerBeta1   = MREggerFit$coef[2,1]
-  SE0            = MREggerFit$coef[1,2]/min(1,MREggerFit$sigma)
-  SE1            = MREggerFit$coef[2,2]/min(1,MREggerFit$sigma)
-  DF             = length(BYG)-2
-  MRBeta0_p      = 2*(1-stats::pt(abs(MREggerBeta0/SE0),DF))
-  MRBeta1_p      = 2*(1-stats::pt(abs(MREggerBeta1/SE1),DF))
-  MRBeta0_CI     = MREggerBeta0 + c(-1,1)*stats::qt(df=DF, 0.975)*SE0
-  MRBeta1_CI     = MREggerBeta1 + c(-1,1)*stats::qt(df=DF, 0.975)*SE1
-  MREggerResults     = data.frame(matrix(nrow = 2,ncol = 6))
-  MREggerResults[1,] = c(MREggerBeta0,SE0,MRBeta0_CI,MREggerBeta0/SE0,MRBeta0_p)
-  MREggerResults[2,] = c(MREggerBeta1,SE1,MRBeta1_CI,MREggerBeta1/SE1,MRBeta1_p)
+  MREggerBeta0   <- MREggerFit$coef[1, 1]
+  MREggerBeta1   <- MREggerFit$coef[2, 1]
+  SE0            <- MREggerFit$coef[1, 2] / min(1, MREggerFit$sigma)
+  SE1            <- MREggerFit$coef[2, 2] / min(1, MREggerFit$sigma)
+  DF             <- length(BYG) - 2
+  MRBeta0_p      <- 2 * (1 - stats::pt(abs(MREggerBeta0 / SE0), DF))
+  MRBeta1_p      <- 2 * (1 - stats::pt(abs(MREggerBeta1 / SE1), DF))
+  MRBeta0_CI     <- MREggerBeta0 + c(-1, 1)*stats::qt(df=DF, 0.975) * SE0
+  MRBeta1_CI     <- MREggerBeta1 + c(-1, 1)*stats::qt(df=DF, 0.975) * SE1
+  MREggerResults     <- data.frame(matrix(nrow = 2,ncol = 6))
+  MREggerResults[1,] <- c(MREggerBeta0, SE0, MRBeta0_CI, MREggerBeta0 / SE0, MRBeta0_p)
+  MREggerResults[2,] <- c(MREggerBeta1, SE1, MRBeta1_CI, MREggerBeta1 / SE1, MRBeta1_p)
   MREggerResults <- as.data.frame(MREggerResults)
   names(MREggerResults)  <- c("effect", "se", "lb", "ub", "wald_test", "pval")
   row.names(MREggerResults)  <- c("b0", "b1")
@@ -272,10 +277,10 @@ compute_egger <- function(bxg, byg, seX, seY) {
 #'   \item{se_ratio} {seX to seY ratio}
 #' }
 compute_ratios <- function(bxg, byg, seX, seY) {
-  ratio =  byg/bxg
-  a = (seY^2)/(byg^2)
-  b = (seX^2)/(bxg^2)
-  se_ratio = sqrt(ratio*ratio*(a+b))
+  ratio <-  byg / bxg
+  a <- (seY^2) / (byg^2)
+  b <- (seX^2) / (bxg^2)
+  se_ratio <- sqrt(ratio*ratio*(a+b))
   list(ratio = ratio, se_ratio = se_ratio)
 }
 
@@ -321,11 +326,11 @@ compute_cochrane_pvalue <- function(q_ivw, nsnp) {
 #' @param seX \code{numeric} standard error of effect on exposure se
 #' @param seY \code{numeric} standard error of effect on outcome se
 #' @param nsnp \code{numeric}
-#' @param mreager \code{data.frame} as returned from \code{\link{compute_egger}}
+#' @param mregger \code{data.frame} as returned from \code{\link{compute_egger}}
 #' @return \code{numeric}
-compute_q_eg <- function(bxg, byg, seX, seY, nsnp, mreager) {
+compute_q_eg <- function(bxg, byg, seX, seY, nsnp, mregger) {
   rs <- compute_ratios(bxg = bxg,  byg = byg, seX = seX, seY = seY)
-  sum(1 / (rs$se_ratio ^ 2) * (rs$ratio - (mreager["b0", "effect"] / abs(bxg)) - mreager["b1", "effect"]) ^ 2)
+  sum(1 / (rs$se_ratio ^ 2) * (rs$ratio - (mregger["b0", "effect"] / abs(bxg)) - mregger["b1", "effect"]) ^ 2)
 }
 
 
@@ -351,7 +356,7 @@ compute_fstat <- function(r2, n_exp) {
 
 #' Power of the study for a specific result i.e. OR
 #'
-#' @param r2 \code{numeric}
+#' @param rw \code{numeric}
 #' @param n_cas \code{numeric}
 #' @param n_out \code{numeric}
 #' @param ivw \code{numeric}
