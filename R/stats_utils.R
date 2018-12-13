@@ -1,6 +1,3 @@
-#library(dplyr)
-#library(tidyr)
-#library(foreign)
 #' @importFrom tidyr %>%
 weighted.median.estimate <- function(betaIV.in, weights.in) {
   betaIV.order = betaIV.in[order(betaIV.in)]
@@ -26,9 +23,9 @@ weighted.median.boot = function(betaXG.in, betaYG.in, sebetaXG.in, sebetaYG.in, 
 }
 
 compute_weighted_median <- function(bxg, byg, seX, seY) {
-  BYG             = byg*sign(bxg) 
-  BXG             = abs(bxg)         
-  
+  BYG             = byg*sign(bxg)
+  BXG             = abs(bxg)
+
   betaIV   = BYG/BXG
   weights  = (seY/BXG)^-2
   betaWM   = weighted.median.estimate(betaIV, weights) # weighted median estimate
@@ -74,7 +71,7 @@ compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4
     }
     return(beta.boot)
   }
-  BetaIV   <- BetaYG/BetaXG    
+  BetaIV   <- BetaYG/BetaXG
   seBetaIV <- cbind(sqrt((seBetaYG^2)/(BetaXG^2) + ((BetaYG^2)*(seBetaXG^2))/(BetaXG^4)), #SEs NOT assuming NOME
                     seBetaYG/abs(BetaXG))                                                 #SEs ASSUMING NOME
   beta_SimpleMBE        <- beta(BetaIV.in=BetaIV, seBetaIV.in=rep(1, length(BetaIV)))
@@ -84,23 +81,23 @@ compute_mbe <- function(BetaXG, BetaYG, seBetaXG, seBetaYG, phi=c(1), n_boot=1e4
                     beta_SimpleMBE, beta_WeightedMBE_NOME))
   beta_MBE.boot <- boot(BetaIV.in=BetaIV, seBetaIV.in=seBetaIV, beta_MBE.in=beta_MBE)
   se_MBE <- apply(beta_MBE.boot, 2, stats::mad)
-  
+
   CIlow_MBE <- beta_MBE-stats::qnorm(1-alpha/2)*se_MBE
   CIupp_MBE <- beta_MBE+stats::qnorm(1-alpha/2)*se_MBE
-  
+
   P_MBE <- stats::pt(abs(beta_MBE/se_MBE), df=length(BetaXG)-1, lower.tail=F)*2
   Method <- rep(c('Simple', 'Weighted', 'Simple (NOME)', 'Weighted (NOME)'), each=length(phi))
-  Results <- data.frame(Method, phi, beta_MBE, se_MBE, CIlow_MBE, CIupp_MBE, P_MBE)  
+  Results <- data.frame(Method, phi, beta_MBE, se_MBE, CIlow_MBE, CIupp_MBE, P_MBE)
   colnames(Results) <- c('method', 'phi', 'effect', 'se', 'ci_low', 'ci_high', 'pval')
-  
+
   Results$or <- exp(Results$effect)
   Results$ci_low <- exp(Results$ci_low)
   Results$ci_high <- exp(Results$ci_high)
-  
+
   return(Results)
 }
 
-# I2 (%) 
+# I2 (%)
 Isq = function(y,s){
   k = length(y)
   w = 1/s^2; sum.w <- sum(w)
@@ -134,8 +131,8 @@ compute_ivw2 <- function(bxg, byg, seX, seY) {
   SE      = IVWfitR2$coef[1,2]/min(1,IVWfitR2$sigma)
   IVW_p   = 2*(1-stats::pt(abs(IVWBeta/SE),DF))
   IVW_CI  = IVWBeta + c(-1,1)*stats::qt(df=DF, 0.975)*SE
-  c(IVWBeta, exp(IVWBeta), exp(IVW_CI), IVW_p) %>% 
-    as.list() %>% 
+  c(IVWBeta, exp(IVWBeta), exp(IVW_CI), IVW_p) %>%
+    as.list() %>%
     as.data.frame() %>%
     magrittr::set_colnames(c("effect", "or", "ci_low", "ci_high", "pval")) %>%
     dplyr::mutate(method = "IVW")
@@ -143,8 +140,8 @@ compute_ivw2 <- function(bxg, byg, seX, seY) {
 
 
 compute_egger <- function(bxg, byg, seX, seY) {
-  BYG             = byg*sign(bxg) 
-  BXG             = abs(bxg)         
+  BYG             = byg*sign(bxg)
+  BXG             = abs(bxg)
   MREggerFit      = summary(stats::lm(BYG ~ BXG,weights=1/seY^2))
   MREggerFit$coef
   MREggerBeta0   = MREggerFit$coef[1,1]
@@ -171,7 +168,7 @@ compute_egger <- function(bxg, byg, seX, seY) {
 }
 
 
-compute_ratios <- function(bxg, byg, seX, seY) { 
+compute_ratios <- function(bxg, byg, seX, seY) {
   ratio =  byg/bxg
   a = (seY^2)/(byg^2)
   b = (seX^2)/(bxg^2)
