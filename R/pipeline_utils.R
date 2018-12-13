@@ -71,7 +71,7 @@ compute_heterogeneity_metrics <- function(bxg, byg, seX, seY, mr, nsnp) {
   Q_ivw <- compute_q_ivw(bxg = bxg, byg = byg, seX = seX, seY = seY)
   p_cochrane <- compute_cochrane_pvalue(q_ivw = Q_ivw, nsnp = nsnp)
 
-  Q_eg <- compute_q_eg(bxg = bxg, byg = byg, seX = seX, seY = seY, nsnp = nsnp, mregger = mr$egger)
+  Q_eg <- compute_q_eg(bxg = bxg, byg = byg, seX = seX, seY = seY, nsnp = nsnp, mreager = mr$egger)
   p_ruckers <- compute_ruckers_q_test_pvalue(q_eq = Q_eg, nsnp = nsnp)
   p_ruckers
 
