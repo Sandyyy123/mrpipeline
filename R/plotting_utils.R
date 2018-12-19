@@ -192,7 +192,7 @@ plot_scatter <- function(result, mar) {
   gg_size <- 25
 
   A_ivw <- RadialMR::ivw_radial(A1, 0.05, 2, 0.0001) #2nd order weights
-  p <- RadialMR::plot_radial(A_ivw,TRUE,TRUE,FALSE) +
+  p <- RadialMR::plot_radial(A_ivw,TRUE, FALSE, FALSE) +
     ggplot2::theme_bw(base_size = 25) +
     ggplot2::theme(
       plot.title =  ggplot2::element_text(size = gg_size, face = "bold", hjust = 0.5),
