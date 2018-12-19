@@ -189,7 +189,7 @@ plot_scatter <- function(result, mar) {
 
 
   A1 <- RadialMR::format_radial(bxg, byg ,seX , seY)
-  gg_size <- 25
+  gg_size <- 22
 
   A_ivw <- RadialMR::ivw_radial(A1, 0.05, 2, 0.0001) #2nd order weights
   p <- RadialMR::plot_radial(A_ivw,TRUE, FALSE, FALSE) +
@@ -201,6 +201,7 @@ plot_scatter <- function(result, mar) {
     ) +
     ggplot2::ylab(expression(bold(`Ratio estimate` * sqrt(`Weight in IVW estimate`)))) +
     ggplot2::xlab(expression(bold(sqrt(`Weight in IVW estimate`)))) +
-    ggplot2::guides(colour = FALSE)
+    ggplot2::guides(colour = FALSE) +
+    ggplot2::ggtitle(glue::glue("D. Pleiotropic variants in causal estimates with {result$meta$exposure} as risk factor"))
   print(p, vp = vp1)
 }
