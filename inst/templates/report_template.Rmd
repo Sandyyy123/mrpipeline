@@ -10,6 +10,7 @@ params:
 library(mrpipeline)
 library(dplyr)
 library(magrittr)
+library(glue)
 ```
 
 
@@ -77,7 +78,7 @@ results_df <- combine_experiments_data(results) %>%
   rename(F_stat = f.test) %>%
   # Marginal annotations are plotted column by column so let's reorder here
   select(outcome, method:pval, Q_pval, `I^2`, F_stat) %>%
-  mutate(annotation = glue::glue("{sprintf('%.2f', or)}"))
+  mutate(annotation = glue("{sprintf('%.2f', or)} ({sprintf('%.2f', ci_low)} - {sprintf('%.2f', ci_high)})"))
 
 experiment_heatmap(
   results_df, "Reds",
