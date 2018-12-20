@@ -180,13 +180,28 @@ plot_scatter <- function(result, mar) {
   abline(L2, 0, lty = 2, lwd = lwd_thick, col = "red")
   abline(L3, 0, lty = 1, lwd = lwd_thick, col = "red")
 
-  # Need to show all lines
-  y=byg/bxg*sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
-  x = sqrt(1/(seY^2/bxg^2 + (byg^2)*seX^2/bxg^4))
-  plot(
-    x, y,
-    main = "D. Radial MR plot showing potential outlier SNPs",
-    ylab = expression(`Ratio estimate` * sqrt(`Weight contributed in the IVW estimate`)),
-    xlab = expression(sqrt(`Weight contributed in the IVW estimate`)),
-    cex = cex, pch = pch, lty = lty, col = col)
+
+  # D. Radial MR plot showing potential outlier SNPs
+  plot.new()
+  vps <- gridBase::baseViewports()
+  grid::pushViewport(vps$figure)
+  vp1 <-grid::plotViewport(c(2.1, 1.1, 2.1, 5.1))
+
+
+  A1 <- RadialMR::format_radial(bxg, byg ,seX , seY)
+  gg_size <- 22
+
+  A_ivw <- RadialMR::ivw_radial(A1, 0.05, 2, 0.0001) #2nd order weights
+  p <- RadialMR::plot_radial(A_ivw,TRUE, FALSE, FALSE) +
+    ggplot2::theme_bw(base_size = 25) +
+    ggplot2::theme(
+      plot.title =  ggplot2::element_text(size = gg_size, face = "bold", hjust = 0.5),
+      axis.text = ggplot2::element_text(size = gg_size - 2, face = "bold"),
+      text = ggplot2::element_text(face = "bold")
+    ) +
+    ggplot2::ylab(expression(bold(`Ratio estimate` * sqrt(`Weight in IVW estimate`)))) +
+    ggplot2::xlab(expression(bold(sqrt(`Weight in IVW estimate`)))) +
+    ggplot2::guides(colour = FALSE) +
+    ggplot2::ggtitle(glue::glue("D. Pleiotropic variants in causal estimates with {result$meta$exposure} as risk factor"))
+  print(p, vp = vp1)
 }

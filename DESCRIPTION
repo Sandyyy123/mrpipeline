@@ -7,9 +7,13 @@ Depends: R (>= 3.4.4)
 Imports: 
 	checkmate,
 	dplyr,
+	ggplot2,
 	glue,
+	grid,
+	gridBase,
 	magrittr,
 	pheatmap,
+	RadialMR,
 	readxl,	
 	RColorBrewer,
 	stringi,

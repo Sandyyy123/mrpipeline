@@ -41,7 +41,7 @@ tangram_results(results, "Parkinson's Disease") %>% tangram::rmd()
 
 ## Scatter plots
 
-```{r, echo=FALSE, message=FALSE, results = 'hide'}
+```{r, echo=FALSE, message=FALSE, results = 'hide', warning=FALSE}
 # Create a list mapping from trait to the output file
 files <- exposures %>% 
   lapply(function(x) tempfile(pattern = x, fileext = ".png")) %>% 
